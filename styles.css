@@ -1,0 +1,25 @@
+.hidden {
+    display: none; 
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.checkboxes__inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.checkboxes label {
+    width: 20%;
+}
+
+address p {
+    line-height: 1; 
+    margin: 0;
+    padding: 0;
+}
