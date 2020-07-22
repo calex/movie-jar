@@ -28,7 +28,7 @@ function getFilmsExpiringSoon() {
     });
 }
 
-function checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore) {
+function addGenreAndMovieToStore(genreName, movieObjectToStore) {
     const genreAlreadyInStore = STORE.some(el => el.genreName === genreName);
 
     if (!genreAlreadyInStore) {
@@ -55,8 +55,7 @@ function addRecordToStoreByGenres(genres, movie) {
         movieObjectToStore.id = movie.nfinfo.netflixid;
         movieObjectToStore.info = movie;
         
-        genres.forEach(genreName => checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore));
-        console.log('STORE: ', STORE);
+        genres.forEach(genreName => addGenreAndMovieToStore(genreName, movieObjectToStore));
     }
 }
 
@@ -65,7 +64,7 @@ function getSingleFilmInfo(netflixId) {
 	    "method": "GET",
         "headers": {
             "x-rapidapi-host": "unogs-unogs-v1.p.rapidapi.com",
-            "x-rapidapi-key": "b5be16bb69msh9fd496408c3c845p147ed4jsndf7e51eb60d5"
+            "x-rapidapi-key": CONFIG_UNOGS_API_KEY
         }
     })
     .then(response => {
