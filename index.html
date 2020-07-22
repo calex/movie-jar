@@ -10,6 +10,17 @@
     <body>
         <div class="container">
             <h1>Netflix Movie Jar</h1>
+            <p>Do you have Analysis Paralysis? Having trouble deciding what to watch tonight?</p>
+            <p>Click the movie jar to pull a random movie genre, then get a movie selected from within that genre. To ease your paralysis even further, we'll throw in some FOMO medicine and make it a flick that's expiring soon from the U.S. Netflix platform.</p>
+            <section id="js-movie-jar" class="movie-jar">
+                <form id="js-genre-choice-form">
+                    <h2>The Movie Jar</h2>
+                    <button type="submit">Pick a Genre</button>
+                </form>
+                <form id="js-movie-choice-form" class="hidden"></form>
+            </section>
+            <section id="js-movie-selection-showcase" class="movie-showcase hidden">
+            </section>
         </div>
         <script src="//cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js"></script>
         <script src="config.js"></script>
