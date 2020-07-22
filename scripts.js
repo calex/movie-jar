@@ -13,7 +13,7 @@ function getFilmsExpiringSoon() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "unogs-unogs-v1.p.rapidapi.com",
-            "x-rapidapi-key": "b5be16bb69msh9fd496408c3c845p147ed4jsndf7e51eb60d5"
+            "x-rapidapi-key": CONFIG_UNOGS_API_KEY
         }
     })
     .then(response => {
