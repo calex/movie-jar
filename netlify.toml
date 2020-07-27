@@ -5,3 +5,7 @@
   base = "."
   functions = "/functions"
 
+[production]
+  base = "."
+  functions = "/functions"
+
