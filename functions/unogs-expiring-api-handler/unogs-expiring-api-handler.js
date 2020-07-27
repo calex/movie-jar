@@ -5,7 +5,7 @@ const getExpiringMovieData = async () => {
     "method": "GET",
     "headers": {
       "x-rapidapi-host": "unogs-unogs-v1.p.rapidapi.com",
-      "x-rapidapi-key": process.env.CONFIG_UNOGS_API_KEY 
+      "x-rapidapi-key": process.env.CONFIG_UNOGS_API_KEY
     }
   })
   .then(response => {

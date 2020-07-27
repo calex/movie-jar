@@ -82,12 +82,8 @@ const addRecordToStoreByGenres = (genres, movie) => {
 }
 
 const getSingleFilmInfo = (netflixId) => {
-    fetch(`https://unogs-unogs-v1.p.rapidapi.com/aaapi.cgi?t=loadvideo&q=${netflixId}`, {
-	    "method": "GET",
-        "headers": {
-            "x-rapidapi-host": "unogs-unogs-v1.p.rapidapi.com",
-            "x-rapidapi-key": CONFIG_UNOGS_API_KEY
-        }
+    fetch(`/.netlify/functions/unogs-films-api-handler?netflixId=${netflixId}`, {
+	    "method": "GET"
     })
     .then(response => {
         if (response.ok) {
@@ -95,7 +91,7 @@ const getSingleFilmInfo = (netflixId) => {
         }
         throw new Error(response.statusText);
     })
-    .then(responseJson => addRecordToStoreByGenres(responseJson.RESULT.mgname, responseJson.RESULT))
+    .then(responseJson => addRecordToStoreByGenres(responseJson.singleFilmData.RESULT.mgname, responseJson.singleFilmData.RESULT))
     .catch(err => {
         console.log(err);
     });
