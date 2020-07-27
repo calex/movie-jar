@@ -25,7 +25,6 @@ const getSingleFilmData = async (netflixId) => {
 exports.handler = async (event, context) => {
   try {
     const netflixId = event.queryStringParameters.netflixId; 
-    console.log('event:', event);
     const singleFilmData = await getSingleFilmData(netflixId)
     return {
       statusCode: 200,

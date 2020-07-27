@@ -408,26 +408,33 @@ p {
     appearance: none;
     -webkit-appearance: none;
 
-    padding: 1em;
-
     outline: 0;
     background-color: transparent;
 }
 
 .button--transparent {
     border: none;
+
+    padding: 1em;
 }
 
 .button--bordered {
-    transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out;
+    transition: background-color 0.25s ease-in-out;
     border: 1px solid #F10B0E;
+
+    padding: 1.1em 1em 1em;
 }
 
 .button--bordered:hover,
 .button--bordered:active,
 .button--bordered:focus {
-    color: #FFF;
     background-color: #F10B0E;
+}
+
+.button--bordered:hover h5,
+.button--bordered:active h5,
+.button--bordered:focus h5 {
+    color: #FFF;
 }
 
 .button--invisible {

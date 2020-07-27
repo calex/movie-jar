@@ -1,6 +1,7 @@
 'use strict';
 
-// Helpers ///////////////////////
+/* Helpers ----------------------------------------------------- */
+
 const showDomItem = ($item) => {
     $item.classList.remove('hidden');
 }
@@ -21,31 +22,11 @@ const formatQueryParams = (params) => {
     return queryItems.join('&');
 }
 
-// Global initializers ///////////////////////
+/* Globals ----------------------------------------------------- */
+
 const STORE = [];
 
-// Functions ///////////////////////
-const processFilmsExpiringSoon = (films) => {
-    films.forEach(item => getSingleFilmInfo(item.netflixid));
-}
-
-// Store populator functions
-const getFilmsExpiringSoon = () => {
-    fetch("/.netlify/functions/unogs-expiring-api-handler", {
-        "method": "GET",
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('response is ok:', response);
-            return response.json();
-        }
-        throw new Error(response.statusText);
-    })
-    .then(responseJson => processFilmsExpiringSoon(responseJson.expiringMovieData.ITEMS))
-    .catch(err => {
-        console.log(err);
-    });
-}
+/* Data functions ----------------------------------------------------- */
 
 const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
     const genreAlreadyInStore = STORE.some(el => el.genreName === genreName);
@@ -81,6 +62,26 @@ const addRecordToStoreByGenres = (genres, movie) => {
     }
 }
 
+const processFilmsExpiringSoon = (films) => {
+    films.forEach(item => getSingleFilmInfo(item.netflixid));
+}
+
+const getFilmsExpiringSoon = () => {
+    fetch("/.netlify/functions/unogs-expiring-api-handler", {
+        "method": "GET",
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error(response.statusText);
+    })
+    .then(responseJson => processFilmsExpiringSoon(responseJson.expiringMovieData.ITEMS))
+    .catch(err => {
+        console.log(err);
+    });
+}
+
 const getSingleFilmInfo = (netflixId) => {
     fetch(`/.netlify/functions/unogs-films-api-handler?netflixId=${netflixId}`, {
 	    "method": "GET"
@@ -97,7 +98,8 @@ const getSingleFilmInfo = (netflixId) => {
     });
 }
 
-// UI functions
+/* UI functions ----------------------------------------------------- */
+
 const watchForms = () => {
     const $genreForm = document.querySelector('#js-genre-choice-form');
     const $movieChoiceForm = document.querySelector('#js-movie-choice-form');
