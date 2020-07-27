@@ -1,6 +1,6 @@
 'use strict';
 
-// Helpers
+// Helpers ///////////////////////
 const showDomItem = ($item) => {
     $item.classList.remove('hidden');
 }
@@ -10,7 +10,9 @@ const hideDomItem = ($item) => {
 }
 
 const getRandomItemFromArray = (array) => {
-    return array[Math.floor(Math.random() * array.length)];   
+    const randomArrayItemNumber = Math.floor(Math.random() * array.length);
+
+    return array[randomArrayItemNumber];   
 }
 
 const formatQueryParams = (params) => {
@@ -19,31 +21,33 @@ const formatQueryParams = (params) => {
     return queryItems.join('&');
 }
 
-// Global initializers
+// Global initializers ///////////////////////
 const STORE = [];
 
+// Functions ///////////////////////
+const processFilmsExpiringSoon = (films) => {
+    films.forEach(item => getSingleFilmInfo(item.netflixid));
+}
+
 // Store populator functions
-function getFilmsExpiringSoon() {
-    fetch("https://unogs-unogs-v1.p.rapidapi.com/aaapi.cgi?q=get%3Aexp%3AUS&t=ns&st=adv&p=1&type=movie", {
+const getFilmsExpiringSoon = () => {
+    fetch("/.netlify/functions/unogs-expiring-api-handler", {
         "method": "GET",
-        "headers": {
-            "x-rapidapi-host": "unogs-unogs-v1.p.rapidapi.com",
-            "x-rapidapi-key": CONFIG_UNOGS_API_KEY
-        }
     })
     .then(response => {
         if (response.ok) {
+            console.log('response is ok:', response);
             return response.json();
         }
         throw new Error(response.statusText);
     })
-    .then(responseJson => responseJson.ITEMS.forEach(item => getSingleFilmInfo(item.netflixid)))
+    .then(responseJson => processFilmsExpiringSoon(responseJson.expiringMovieData.ITEMS))
     .catch(err => {
         console.log(err);
     });
 }
 
-function checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore) {
+const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
     const genreAlreadyInStore = STORE.some(el => el.genreName === genreName);
 
     if (!genreAlreadyInStore) {
@@ -52,30 +56,32 @@ function checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore) {
         
         newGenreObject.id = cuid();
         newGenreObject.genreName = genreName;
-        newGenreObject.moviesInGenre = [movieObjectToStore];
+        newGenreObject.moviesInGenre = [movieObjectToStore]; // init as array
 
         STORE.push(newGenreObject);
+    
     } else {
         
         const existingGenreObject = STORE.find(el => el.genreName === genreName);
 
-        existingGenreObject.moviesInGenre.push([movieObjectToStore]);
+        existingGenreObject.moviesInGenre.push(movieObjectToStore);
     }
 }
 
-function addRecordToStoreByGenres(genres, movie) {
+const addRecordToStoreByGenres = (genres, movie) => {
     if (movie.nfinfo.type === "movie") {
         const movieObjectToStore = new Object();
 
         movieObjectToStore.id = movie.nfinfo.netflixid;
         movieObjectToStore.info = movie;
-        
+
         genres.forEach(genreName => checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore));
-        console.log('STORE: ', STORE);
+
+        removeAppLoadingState();
     }
 }
 
-function getSingleFilmInfo(netflixId) {
+const getSingleFilmInfo = (netflixId) => {
     fetch(`https://unogs-unogs-v1.p.rapidapi.com/aaapi.cgi?t=loadvideo&q=${netflixId}`, {
 	    "method": "GET",
         "headers": {
@@ -112,9 +118,9 @@ const watchForms = () => {
 
         RANDOM_GENRE = randomStoreItem.genreName;
 
-        RANDOM_FILM_WITHIN_GENRE = getRandomItemFromArray(randomStoreItem.moviesInGenre);
+        RANDOM_FILM_WITHIN_GENRE  = getRandomItemFromArray(randomStoreItem.moviesInGenre);
 
-        $movieChoiceForm.innerHTML = `<h3>You drew <b>${RANDOM_GENRE}</b><h3><button type='submit'>Get a movie in this genre</button>`;
+        $movieChoiceForm.innerHTML = `<h5>You drew</<h5><h3 class="movie-jar__genre-choice-title">&ldquo;${RANDOM_GENRE}&rdquo;<h3><button type='submit' class='button button--transparent'><h5>Get a movie in this genre!</h5></button>`;
 
         hideDomItem($genreForm);
         showDomItem($movieChoiceForm);     
@@ -134,7 +140,7 @@ const watchForms = () => {
                         <span>IMDB Rating: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.rating} / 10</span>
                     </h5>
                     <p>${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.synopsis}</p>
-                    <button id='js-start-over-button' type='submit' class='start-over-button'>Start Over</button>
+                    <button id='js-start-over-button' type='submit' class='button button--bordered'><h5>Start Over</h5></button>
                 </div>
             `;
 
@@ -157,6 +163,12 @@ const watchForms = () => {
             showDomItem($genreForm);
         });
     });
+}
+
+const removeAppLoadingState = () => {
+    const $jarDomElTitle = document.querySelector('#js-movie-jar-title');
+
+    $jarDomElTitle.textContent = "Click to Pick!";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
