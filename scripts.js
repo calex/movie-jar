@@ -16,17 +16,11 @@ const getRandomItemFromArray = (array) => {
     return array[randomArrayItemNumber];   
 }
 
-const formatQueryParams = (params) => {
-    const queryItems = Object.keys(params)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-    return queryItems.join('&');
-}
-
 /* Globals ----------------------------------------------------- */
 
 const STORE = [];
 
-/* Data functions ----------------------------------------------------- */
+/* Data and API Handling functions ----------------------------------------------------- */
 
 const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
     const genreAlreadyInStore = STORE.some(el => el.genreName === genreName);
@@ -40,7 +34,7 @@ const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
         newGenreObject.moviesInGenre = [movieObjectToStore]; // init as array
 
         STORE.push(newGenreObject);
-    
+        
     } else {
         
         const existingGenreObject = STORE.find(el => el.genreName === genreName);
@@ -58,12 +52,18 @@ const addRecordToStoreByGenres = (genres, movie) => {
 
         genres.forEach(genreName => checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore));
 
+        if (STORE.length > 10) {
+            addGenreDomItemRepresentation(STORE.length);
+        }
+
         removeAppLoadingState();
     }
 }
 
 const processFilmsExpiringSoon = (films) => {
-    films.forEach(item => getSingleFilmInfo(item.netflixid));
+    films.forEach(item => {
+        getSingleFilmInfo(item.netflixid);
+    });
 }
 
 const getFilmsExpiringSoon = () => {
@@ -98,18 +98,67 @@ const getSingleFilmInfo = (netflixId) => {
     });
 }
 
-/* UI functions ----------------------------------------------------- */
+/* UI Handling functions ----------------------------------------------------- */
+
+const animateIntoJar = (domItem, itemNumber) => {
+    let pos = 120;
+    let id = setInterval(frame, 5);
+    
+    function frame() {
+        if (pos == 10) {
+            clearInterval(id);
+        } else {
+            pos--; 
+            domItem.style.bottom = (pos + (itemNumber / 10)) + "%"; 
+        }
+    }
+}
+
+
+const addGenreDomItemRepresentation = (itemNumber) => {
+    const $movieJarPaperList = document.querySelector('#js-movie-jar-paper-list');
+
+    const listItemNode = document.createElement("LI");   
+
+    $(listItemNode).addClass('js-dynamically-added');
+
+    let randomNumberBetween1and90 = Math.floor(Math.random() * 90) + 1;
+
+    let randomNumberBetween1and100 = Math.floor(Math.random() * 100) + 1;
+
+    listItemNode.setAttribute('style', `transform: rotate(${randomNumberBetween1and90}deg); left:${randomNumberBetween1and100}%;`);
+
+    animateIntoJar(listItemNode, itemNumber);
+
+    $movieJarPaperList.appendChild(listItemNode);
+}
+
+const removeAppLoadingState = () => {
+    const jarDomElLoadingTitleId = '#js-movie-jar-loading-title';
+
+    $('#js-movie-jar').addClass('js-ready');
+
+    $(jarDomElLoadingTitleId).addClass('js-animate-out');
+
+    const timedClassSwitches = setTimeout(() => { 
+        $(jarDomElLoadingTitleId).addClass('hidden');
+        $('#js-movie-jar-ready-title').removeClass('hidden').addClass('js-animate-in');
+    }, 1000);
+}
+
+/* Form Submission & Button Handling functions ----------------------------------------------------- */
 
 const watchForms = () => {
     const $genreForm = document.querySelector('#js-genre-choice-form');
-    const $movieChoiceForm = document.querySelector('#js-movie-choice-form');
+    const $movieChoiceFormWrapper = document.querySelector('#js-movie-choice-form-wrapper');
+
     const $movieJarSection = document.querySelector('#js-movie-jar');
     const $movieSelectionSection = document.querySelector('#js-movie-selection-showcase');
     
     let RANDOM_GENRE = "";
     let RANDOM_FILM_WITHIN_GENRE = "";
 
-    $genreForm.addEventListener("submit", (e) => {
+    $('#js-genre-choice-form').on('submit', function(e) {
         e.preventDefault();
 
         const randomStoreItem = getRandomItemFromArray(STORE);
@@ -118,55 +167,72 @@ const watchForms = () => {
 
         RANDOM_FILM_WITHIN_GENRE  = getRandomItemFromArray(randomStoreItem.moviesInGenre);
 
-        $movieChoiceForm.innerHTML = `<h5>You drew</<h5><h3 class="movie-jar__genre-choice-title">&ldquo;${RANDOM_GENRE}&rdquo;<h3><button type='submit' class='button button--transparent'><h5>Get a movie in this genre!</h5></button>`;
-
+        $movieChoiceFormWrapper.innerHTML = `
+            <form id='js-movie-choice-form'>
+                <h5>You drew</h5>
+                <div class='movie-jar__genre-choice-title-block'>
+                    <h3 class="movie-jar__genre-choice-title">&ldquo;${RANDOM_GENRE}&rdquo;</h3>
+                </div>
+                <button type='submit' class='button button--bordered'>Get a movie in this genre!</button>
+                <h5 class="button-interstitial-text">&ndash; or &ndash;</h5>
+            </form>
+            <button class='button button--bordered js-start-over-button'>
+                Dither more and start over!
+            </button>
+        `;
+        
         hideDomItem($genreForm);
-        showDomItem($movieChoiceForm);     
+        showDomItem($movieChoiceFormWrapper);            
     });
 
-    $movieChoiceForm.addEventListener("submit", (e) => {
+    $('#js-movie-jar-area').on('submit', '#js-movie-choice-form', function(e) {
         e.preventDefault();
 
         $movieSelectionSection.innerHTML = 
             `
-                <img class='movie-showcase__poster' src=${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.image1}>
+                <div class='movie-showcase__poster'>
+                    <img alt=${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.title} src=${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.image1} />
+                </div>
                 <div class='movie-showcase__summary'>
-                    <h3>${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.title} (${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.released})</h3>
-                    <h5>
-                        <span>Runtime: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.runtime}</span>
-                        &middot;
-                        <span>IMDB Rating: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.rating} / 10</span>
+                    <h3 class="movie-showcase__title">${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.title} (${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.released})</h3>
+                    <h5 class="movie-showcase__subtitle">
+                       Runtime: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.runtime}
                     </h5>
-                    <p>${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.synopsis}</p>
-                    <button id='js-start-over-button' type='submit' class='button button--bordered'><h5>Start Over</h5></button>
+                    <h5 class="movie-showcase__subtitle">
+                        IMDB Rating: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.rating} / 10
+                    </h5>
+                    <p class="movie-showcase__synopsis">${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.synopsis}</p>
+                    <button type='submit' class='button button--bordered js-start-over-button'>Start Over</button>
                 </div>
             `;
 
-        hideDomItem($movieJarSection);
+        hideDomItem($movieChoiceFormWrapper);
+
+        $('#js-movie-jar').addClass('js-reveal-state');
+        
         showDomItem($movieSelectionSection);
 
-        const $startOverButton = $movieSelectionSection.querySelector('#js-start-over-button');
+        $('#js-movie-selection-showcase').addClass('js-animate-in');
 
-        $startOverButton.addEventListener("click", (e) => {
-            RANDOM_GENRE = "";
-            RANDOM_FILM_WITHIN_GENRE = "";
-            
-            $movieChoiceForm.innerHTML = '';
-            $movieSelectionSection.innerHTML = '';
-
-            hideDomItem($movieChoiceForm);
-            hideDomItem($movieSelectionSection);
-
-            showDomItem($movieJarSection);
-            showDomItem($genreForm);
-        });
     });
-}
 
-const removeAppLoadingState = () => {
-    const $jarDomElTitle = document.querySelector('#js-movie-jar-title');
+    $('#js-movie-jar-area').on('click', '.js-start-over-button', function(e) {
+        e.preventDefault();
+    
+        RANDOM_GENRE = "";
+        RANDOM_FILM_WITHIN_GENRE = "";
+        
+        $movieChoiceFormWrapper.innerHTML = '';
+        $movieSelectionSection.innerHTML = '';
+    
+        hideDomItem($movieChoiceFormWrapper);
+        hideDomItem($movieSelectionSection);
+    
+        showDomItem($movieJarSection);
+        showDomItem($genreForm);
 
-    $jarDomElTitle.textContent = "Click to Pick!";
+        $('#js-movie-jar').removeClass('js-reveal-state');
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
