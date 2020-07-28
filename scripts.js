@@ -20,6 +20,7 @@ const getRandomItemFromArray = (array) => {
 
 const STORE = [];
 
+// DOM element ID globals - utilized in multiple functions
 const jarDomElLoadingTitleId = '#js-movie-jar-loading-title';
 const jarDomElId = '#js-movie-jar';
 const genreChoiceFormId = '#js-genre-choice-form';
@@ -118,7 +119,6 @@ const animateIntoJar = (domItem, itemNumber) => {
         }
     }
 }
-
 
 const addGenreDomItemRepresentation = (itemNumber) => {
     const $movieJarPaperList = document.querySelector('#js-movie-jar-paper-list');
