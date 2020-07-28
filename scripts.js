@@ -20,6 +20,11 @@ const getRandomItemFromArray = (array) => {
 
 const STORE = [];
 
+const jarDomElLoadingTitleId = '#js-movie-jar-loading-title';
+const jarDomElId = '#js-movie-jar';
+const genreChoiceFormId = '#js-genre-choice-form';
+const movieSelectionSectionId = '#js-movie-selection-showcase';
+
 /* Data and API Handling functions ----------------------------------------------------- */
 
 const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
@@ -134,9 +139,8 @@ const addGenreDomItemRepresentation = (itemNumber) => {
 }
 
 const removeAppLoadingState = () => {
-    const jarDomElLoadingTitleId = '#js-movie-jar-loading-title';
 
-    $('#js-movie-jar').addClass('js-ready');
+    $(jarDomElId).addClass('js-ready');
 
     $(jarDomElLoadingTitleId).addClass('js-animate-out');
 
@@ -149,16 +153,16 @@ const removeAppLoadingState = () => {
 /* Form Submission & Button Handling functions ----------------------------------------------------- */
 
 const watchForms = () => {
-    const $genreForm = document.querySelector('#js-genre-choice-form');
+    const $genreForm = document.querySelector(genreChoiceFormId);
     const $movieChoiceFormWrapper = document.querySelector('#js-movie-choice-form-wrapper');
 
-    const $movieJarSection = document.querySelector('#js-movie-jar');
-    const $movieSelectionSection = document.querySelector('#js-movie-selection-showcase');
+    const $movieJarSection = document.querySelector(jarDomElId);
+    const $movieSelectionSection = document.querySelector(movieSelectionSectionId);
     
     let RANDOM_GENRE = "";
     let RANDOM_FILM_WITHIN_GENRE = "";
 
-    $('#js-genre-choice-form').on('submit', function(e) {
+    $(genreChoiceFormId).on('submit', function(e) {
         e.preventDefault();
 
         const randomStoreItem = getRandomItemFromArray(STORE);
@@ -188,6 +192,14 @@ const watchForms = () => {
     $('#js-movie-jar-area').on('submit', '#js-movie-choice-form', function(e) {
         e.preventDefault();
 
+        const runtimeInfoTitle = (RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.runtime !== undefined) ?
+            `<h5 class="movie-showcase__subtitle">Runtime: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.runtime}</h5>` : 
+            "";
+
+        const ratingInfoTitle = (RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.rating !== undefined) ?
+            `<h5 class="movie-showcase__subtitle">IMDB Rating: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.rating} / 10</h5>` :
+            "";
+
         $movieSelectionSection.innerHTML = 
             `
                 <div class='movie-showcase__poster'>
@@ -195,12 +207,8 @@ const watchForms = () => {
                 </div>
                 <div class='movie-showcase__summary'>
                     <h3 class="movie-showcase__title">${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.title} (${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.released})</h3>
-                    <h5 class="movie-showcase__subtitle">
-                       Runtime: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.runtime}
-                    </h5>
-                    <h5 class="movie-showcase__subtitle">
-                        IMDB Rating: ${RANDOM_FILM_WITHIN_GENRE.info.imdbinfo.rating} / 10
-                    </h5>
+                    ${runtimeInfoTitle}
+                    ${ratingInfoTitle}
                     <p class="movie-showcase__synopsis">${RANDOM_FILM_WITHIN_GENRE.info.nfinfo.synopsis}</p>
                     <button type='submit' class='button button--bordered js-start-over-button'>Start Over</button>
                 </div>
@@ -208,11 +216,11 @@ const watchForms = () => {
 
         hideDomItem($movieChoiceFormWrapper);
 
-        $('#js-movie-jar').addClass('js-reveal-state');
+        $(jarDomElId).addClass('js-reveal-state');
         
         showDomItem($movieSelectionSection);
 
-        $('#js-movie-selection-showcase').addClass('js-animate-in');
+        $(movieSelectionSectionId).addClass('js-animate-in');
 
     });
 
@@ -231,7 +239,7 @@ const watchForms = () => {
         showDomItem($movieJarSection);
         showDomItem($genreForm);
 
-        $('#js-movie-jar').removeClass('js-reveal-state');
+        $(jarDomElId).removeClass('js-reveal-state');
     });
 }
 
