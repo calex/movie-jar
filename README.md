@@ -25,17 +25,17 @@ You've been 'dealt' a movie or TV series within that genre.
 
 ## Running the App
 
-The app is built and housed on Netlify in order to keep API keys hidden. If you have access to the Netlify instance, you can run the app against Netlify's lambda 'serverless' functions, which have been built to serve the API and as such use Netlify's environment variables, by doing the following:
+The app is built and housed on Netlify in order to keep API keys hidden. If you have access to the Netlify instance, you can run the app against Netlify's lambda 'serverless' functions, which have been built to serve the app's internal API, and as such use Netlify's environment variables, by doing the following:
 
-Install Netlify cli:
+1. Install Netlify cli:
 
 `npm install netlify-cli -g`
 
-Run Netlify dev:
+2. Run Netlify dev:
 
 `netlify dev --live`
 
-Environment variables are set in the Netlify account and only accessible there. Out of the box, the app will run on the localhost:8888 port and the lambda functions will be available on the supplied port the CLI will give you.
+Environment variables, which supply the uNoGS API keys, are set in the Netlify account and only accessible there. Out of the box, the app will run on the localhost:8888 port and the lambda functions will be available on the supplied port the CLI will give you.
 
 ## Publishing the App
 
