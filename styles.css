@@ -14,18 +14,6 @@
     --red-color: #F10B0E;
 }
 
-* {
-    padding: 0;
-    margin: 0;
-}
-
-body {
-    background-color: #FFA8BC;
-    height: 100vh;
-    
-    font-size: 16px;
-}
-
 html {
     font-size: 16px;
     line-height: 24px;
@@ -38,11 +26,20 @@ html {
     box-sizing: inherit; 
 }
 
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: #FFA8BC;
+    height: 100vh;
+}
+
 body, .article {
     font-family: sans-serif;
     font-size: 1em;
     line-height: 1.5em;
-    max-width: 560px;
     margin: auto;
 }
 
@@ -61,10 +58,19 @@ h2, .h2 {
 }
 
 h3, .h3 {
-    font-size: 1.625em;
-    line-height: 1.84615385em;
-    margin-top: 0.92307692em;
+    font-size: 1.25em;
+    line-height: 1.5em;
+    margin-top: 1.5em;
     margin-bottom: 0em;
+}
+
+@media screen and (min-width: 400px) {
+    h3, .h3 {
+        font-size: 1.625em;
+        line-height: 1.84615385em;
+        margin-top: 0.92307692em;
+        margin-bottom: 0em;
+    }
 }
 
 h4, .h4 {
@@ -99,6 +105,11 @@ p > a:focus {
     border-bottom-color: transparent;
 }
 
+p > sup {
+    display: inline-block;
+    margin-top: -0.85em;    
+}
+
 /* Let's make sure all's aligned */
 hr, .hr {
     border: 1px solid;
@@ -123,15 +134,25 @@ p {
     flex-direction: column;
     justify-content: space-between;
     
-    max-width: 800px;
-    height: 100%;
+    max-width: 680px;
 
-    padding: 5rem 0; 
+    padding: 2rem; 
     margin: 0 auto;
 }
 
 .app-intro {
-    margin-bottom: 2em;
+    margin-bottom: 2vh;
+}
+
+.app-title {
+    text-align: center;
+    margin-bottom: 3vh;
+}
+
+@media screen and (max-width: 600px) {
+    .app-title {
+        font-size: 7vw;
+    }
 }
 
 .movie-jar__area {
@@ -147,8 +168,8 @@ p {
     transition: transform 1s ease-in-out, width 1s ease-in-out;
     position: relative;
 
-    width: 350px;
-    height: 450px;
+    width: 100%;
+    height: 350px;
     margin: 2em auto 0;
     padding: 0;
 
@@ -159,11 +180,35 @@ p {
     background-color: rgba(255,255,255,0.25);
 }
 
+@media screen and (min-width: 400px) {
+    .movie-jar {
+        width: 350px;
+        height: 450px;
+    }
+}
+
+
+
 .movie-jar.js-reveal-state {
     height: auto;
-    width: 125%;
-    transform: translateX(-12.5%);
     overflow: hidden;
+    -webkit-mask-image: -webkit-radial-gradient(white, black); /*fix for border-radius bug on safari*/
+    width: 100%;
+    border-radius: 50px;
+}
+
+@media screen and (min-width: 600px) and (max-width: 930px) {
+    .movie-jar.js-reveal-state {
+        flex: 1; 
+    }
+}
+
+@media screen and (min-width: 930px) {
+    .movie-jar.js-reveal-state {
+        width: 125%;
+        transform: translateX(-12.5%);
+        border-radius: 100px;
+    }
 }
 
 .movie-jar.js-reveal-state .movie-jar__lid {
@@ -321,13 +366,20 @@ p {
     animation: foldOut 1s ease-out forwards;
     position: relative;
 
-    width: 80%;
+    width: 90%;
 
-    margin: 0 auto 3em;
+    margin: 0 auto 2em;
     padding: 0.5em 1em;
 
     border-radius: 1px;
     background-color: #FFF;
+}
+
+@media screen and (min-width: 400px) {
+    .movie-jar__genre-choice-title-block {
+        width: 80%;
+        margin: 0 auto 3em;
+    }
 }
 
 .movie-jar__genre-choice-title-block:before {
@@ -364,14 +416,21 @@ p {
     margin-top: 0;
 
     font-family: "Apercu";
-    font-size: 1.2em;
+    font-size: 1em;
     text-transform: uppercase;
     line-height: 1.2;
 }
 
+@media screen and (min-width: 400px) {
+    .movie-jar__genre-choice-title-block {
+        font-size: 1.2em;
+    }
+}
+
+
+.error-display,
 .movie-showcase {
     display: flex;
-    flex-direction: row;
     
     width: 100%;
     height: 100%;
@@ -379,17 +438,71 @@ p {
     background-color: #FFF;
 
     overflow: hidden;
+
+    flex-direction: column;
+}
+
+@media screen and (min-width: 600px) {
+    .movie-showcase {
+        flex-direction: row;
+    }
 }
 
 .movie-showcase__poster {
     position: relative;
     z-index: 2;
 
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    
     height: auto;
-    min-width: 17em;
+    width: 100%;
+}
 
-    background-color: var(--red-color);
+.movie-showcase__poster img {
+    object-fit: cover;
+    width: 100%;
+    height: auto; 
+    max-height: 15rem;
+}
+
+@media screen and (min-width: 425px) {
+    .movie-showcase__poster img {
+        max-height: 20rem;
+    }
+}
+
+@media screen and (min-width: 500px) {
+    .movie-showcase__poster img {
+        max-height: 25rem;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .movie-showcase__poster {
+        display: block;
+        width: auto;
+        min-width: 10em;
+        max-height: none;
+
+        padding: 4rem 0 0 4rem;
+    }
+}
+
+@media screen and (min-width: 930px) {
+    .movie-showcase__poster {
+        min-width: 17em;
+        height: auto;
+        padding: 0;
+        background-color: var(--red-color);
+    }
+
+    .movie-showcase__poster img {
+        width: auto;
+        height: 100%;
+        max-height: none;
+    }
 }
 
 .movie-showcase__title {
@@ -415,19 +528,26 @@ p {
     }
 }
 
-.movie-showcase__poster img {
-    height: 100%;
-    object-fit: cover;
-}
-
 .movie-showcase__summary {
     position: relative;
     z-index: 1; 
 
-    padding: 2rem 4rem 2rem;
+    padding: 0 2rem 2rem;
     text-align: left;
 
     opacity: 0;
+}
+
+@media screen and (min-width: 600px) {
+    .movie-showcase__summary {
+        padding: 2rem 3rem 2rem;
+    }
+}
+
+@media screen and (min-width: 930px) {
+    .movie-showcase__summary {
+        padding: 2rem 4rem 1rem;
+    }
 }
 
 .movie-showcase.js-animate-in .movie-showcase__poster img {
@@ -568,7 +688,7 @@ p {
 
 .button {
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -582,6 +702,16 @@ p {
     text-transform: uppercase;
     line-height: 1;
     white-space: nowrap;
+}
+
+.button .u-text-hide-on-tiny {
+    display: none;
+}
+
+@media screen and (min-width: 400px) {
+    .button .u-text-hide-on-tiny {
+        display: inline;
+    }
 }
 
 .button--bordered,
@@ -638,6 +768,16 @@ p {
     line-height: 1;
     white-space: nowrap;
     margin: 1em 0;
+}
+
+.footnote {
+    padding-top: 1em;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.footnote p {
+    font-size: 0.75em;
+    line-height: 1; 
 }
 
 .hidden {

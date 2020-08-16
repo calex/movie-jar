@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
 const getExpiringMovieData = async () => {  
-  return fetch("https://unogs-unogs-v1.p.rapidapi.com/aaapi.cgi?q=get%3Aexp%3AUS&t=ns&st=adv&p=1&type=movie", {
+  return fetch("https://unogs-unogs-v1.p.rapidapi.com/aaapi.cgi?q=get%3Aexp%3Aus&t=ns&st=adv&p=1", {
     "method": "GET",
     "headers": {
       "x-rapidapi-host": "unogs-unogs-v1.p.rapidapi.com",

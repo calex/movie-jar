@@ -25,6 +25,9 @@ const jarDomElLoadingTitleId = '#js-movie-jar-loading-title';
 const jarDomElId = '#js-movie-jar';
 const genreChoiceFormId = '#js-genre-choice-form';
 const movieSelectionSectionId = '#js-movie-selection-showcase';
+const $movieSelectionSection = document.querySelector(movieSelectionSectionId);
+const $movieChoiceFormWrapper = document.querySelector('#js-movie-choice-form-wrapper');
+const $footnote = document.querySelector('#js-footnote');
 
 /* Data and API Handling functions ----------------------------------------------------- */
 
@@ -39,8 +42,7 @@ const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
         newGenreObject.genreName = genreName;
         newGenreObject.moviesInGenre = [movieObjectToStore]; // init as array
 
-        STORE.push(newGenreObject);
-        
+        STORE.push(newGenreObject);        
     } else {
         
         const existingGenreObject = STORE.find(el => el.genreName === genreName);
@@ -50,20 +52,18 @@ const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
 }
 
 const addRecordToStoreByGenres = (genres, movie) => {
-    if (movie.nfinfo.type === "movie") {
-        const movieObjectToStore = new Object();
+    const movieObjectToStore = new Object();
 
-        movieObjectToStore.id = movie.nfinfo.netflixid;
-        movieObjectToStore.info = movie;
+    movieObjectToStore.id = movie.nfinfo.netflixid;
+    movieObjectToStore.info = movie;
 
-        genres.forEach(genreName => checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore));
+    genres.forEach(genreName => checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore));
 
-        if (STORE.length > 10) {
-            addGenreDomItemRepresentation(STORE.length);
-        }
-
-        removeAppLoadingState();
+    if (STORE.length > 10) {
+        addGenreDomItemRepresentation(STORE.length);
     }
+
+    removeAppLoadingState();
 }
 
 const processFilmsExpiringSoon = (films) => {
@@ -84,6 +84,7 @@ const getFilmsExpiringSoon = () => {
     })
     .then(responseJson => processFilmsExpiringSoon(responseJson.expiringMovieData.ITEMS))
     .catch(err => {
+        displayAPIErrorInDom(err);
         console.log(err);
     });
 }
@@ -100,6 +101,7 @@ const getSingleFilmInfo = (netflixId) => {
     })
     .then(responseJson => addRecordToStoreByGenres(responseJson.singleFilmData.RESULT.mgname, responseJson.singleFilmData.RESULT))
     .catch(err => {
+        displayAPIErrorInDom(err);
         console.log(err);
     });
 }
@@ -150,14 +152,37 @@ const removeAppLoadingState = () => {
     }, 1000);
 }
 
+const displayPostJarStep = () => {
+    hideDomItem($movieChoiceFormWrapper);
+
+    $(jarDomElId).addClass('js-reveal-state');
+    
+    showDomItem($movieSelectionSection);
+    $footnote.setAttribute('style', `border-top: none`);
+
+    $(movieSelectionSectionId).addClass('js-animate-in');
+}
+
+/* Error Handling ----------------------------------------------------- */
+
+const displayAPIErrorInDom = (error) => {
+    $movieSelectionSection.innerHTML = 
+        `
+            <div class='error-display'>
+                <h3 class="error-display__title">Sorry, we've hit a snag.</h3>
+                <p>${error}</p>
+                <button type='submit' class='button button--bordered js-start-over-button'>Try again</button>
+            </div>
+        `;
+    
+    displayPostJarStep();
+}
+
 /* Form Submission & Button Handling functions ----------------------------------------------------- */
 
 const watchForms = () => {
     const $genreForm = document.querySelector(genreChoiceFormId);
-    const $movieChoiceFormWrapper = document.querySelector('#js-movie-choice-form-wrapper');
-
     const $movieJarSection = document.querySelector(jarDomElId);
-    const $movieSelectionSection = document.querySelector(movieSelectionSectionId);
     
     let RANDOM_GENRE = "";
     let RANDOM_FILM_WITHIN_GENRE = "";
@@ -177,11 +202,11 @@ const watchForms = () => {
                 <div class='movie-jar__genre-choice-title-block'>
                     <h3 class="movie-jar__genre-choice-title">&ldquo;${RANDOM_GENRE}&rdquo;</h3>
                 </div>
-                <button type='submit' class='button button--bordered'>Get a movie in this genre!</button>
+                <button type='submit' class='button button--bordered'><span>Get something<span class='u-text-hide-on-tiny'> in this genre</span>!</span></button>
                 <h5 class="button-interstitial-text">&ndash; or &ndash;</h5>
             </form>
             <button class='button button--bordered js-start-over-button'>
-                Dither more and start over!
+                <span>Dither more<span class='u-text-hide-on-tiny'> and start over</span>!</span>
             </button>
         `;
         
@@ -214,14 +239,7 @@ const watchForms = () => {
                 </div>
             `;
 
-        hideDomItem($movieChoiceFormWrapper);
-
-        $(jarDomElId).addClass('js-reveal-state');
-        
-        showDomItem($movieSelectionSection);
-
-        $(movieSelectionSectionId).addClass('js-animate-in');
-
+        displayPostJarStep();
     });
 
     $('#js-movie-jar-area').on('click', '.js-start-over-button', function(e) {
@@ -235,7 +253,9 @@ const watchForms = () => {
     
         hideDomItem($movieChoiceFormWrapper);
         hideDomItem($movieSelectionSection);
-    
+
+        $footnote.setAttribute('style', `border-top: 1px solid rgba(0,0,0,0.05)`);
+        
         showDomItem($movieJarSection);
         showDomItem($genreForm);
 
