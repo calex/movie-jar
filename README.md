@@ -1,4 +1,4 @@
-# That Netlix Jar
+# That Netflix Jar
 
 A movie and TV series app that uses available 3rd-party API information about movies and shows on Netflix in order to provide users with an easy choice. Users can select a genre from a GUI 'jar' at random, and then get shown a Netlfix movie that is 'expiring soon' - all to lessen the 'Analysis Paralysis' that sometimes comes with trying to make a Netflix viewing choice.
 
