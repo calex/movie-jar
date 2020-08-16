@@ -39,6 +39,6 @@ Environment variables, which supply the uNoGS API keys, are set in the Netlify a
 
 ## Publishing the App
 
-Because there is no build process to automate, Netlify's typical procedure of running a build upon deployment to Git will not work. To ensure the app has been deployed and the functions are running, when you are ready to publish to Netlify, run:
+Because there is no build process to automate, Netlify's typical procedure of running a build upon deployment to Github will not work. To ensure the app has been deployed and the functions are running, when you are ready to publish to Netlify, run:
 
 `netlify deploy --prod`
