@@ -4,7 +4,7 @@ A movie and TV series app that uses available 3rd-party API information about mo
 
 ## Screenshots
 
-![Initial screen](/screenshots/initial-screen.png)
+![Initial screen](/screenshots/initial-screen_2.png)
 Initial screen you're greeted with.
 
 ![Genre selected screen](/screenshots/genre-selection.png)
