@@ -33,7 +33,7 @@ Run Netlify dev:
 
 `netlify dev --live`
 
-Environment variables are set in the Netlify account and only accessible there. 
+Environment variables are set in the Netlify account and only accessible there. The app will run on localhost:8888 port and the lambda functions will be available on the supplied port the CLI will give you.
 
 ## Publishing the App
 
