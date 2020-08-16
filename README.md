@@ -2,6 +2,8 @@
 
 A movie and TV series app that uses available 3rd-party API information about movies and shows on Netflix in order to provide users with an easy choice. Users can select a genre from a GUI 'jar' at random, and then get shown a Netlfix movie that is 'expiring soon' - all to lessen the 'Analysis Paralysis' that sometimes comes with trying to make a Netflix viewing choice.
 
+Find the app hosted on Netlify at [That Netflix Jar](https://musing-bhabha-78fdac.netlify.app/).
+
 ## Screenshots
 
 ![Initial screen](/screenshots/initial-screen_2.png)
