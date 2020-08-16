@@ -34,17 +34,19 @@ const $footnote = document.querySelector('#js-footnote');
 const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
     const genreAlreadyInStore = STORE.some(el => el.genreName === genreName);
 
+    // if the genre doesn't exist in the store, create a new object for it then add
     if (!genreAlreadyInStore) {
 
         const newGenreObject = {};
         
         newGenreObject.id = cuid();
         newGenreObject.genreName = genreName;
-        newGenreObject.moviesInGenre = [movieObjectToStore]; // init as array
+        // init as array
+        newGenreObject.moviesInGenre = [movieObjectToStore]; 
 
         STORE.push(newGenreObject);        
     } else {
-        
+        // if the genre does exist, just push the movie/series under the existing genre in the store
         const existingGenreObject = STORE.find(el => el.genreName === genreName);
 
         existingGenreObject.moviesInGenre.push(movieObjectToStore);
@@ -52,13 +54,15 @@ const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
 }
 
 const addRecordToStoreByGenres = (genres, movie) => {
-    const movieObjectToStore = new Object();
+    const movieObjectToStore = {};
 
     movieObjectToStore.id = movie.nfinfo.netflixid;
     movieObjectToStore.info = movie;
 
     genres.forEach(genreName => checkIfGenreRecordExistsThenAdd(genreName, movieObjectToStore));
 
+    // this seems arbitrary, but is set to over 10 because we already have 10 sheets of paper
+    // which represent the genre data items in the DOM - just a fun trivial thing
     if (STORE.length > 10) {
         addGenreDomItemRepresentation(STORE.length);
     }
@@ -73,6 +77,7 @@ const processFilmsExpiringSoon = (films) => {
 }
 
 const getFilmsExpiringSoon = () => {
+    // The first API call that runs, this gets expiring movies and shows from Netflix
     fetch("/.netlify/functions/unogs-expiring-api-handler", {
         "method": "GET",
     })
@@ -90,6 +95,7 @@ const getFilmsExpiringSoon = () => {
 }
 
 const getSingleFilmInfo = (netflixId) => {
+    // Runs for each item in the the initial list of expiring movies fetched, above; runs for each movie in that list
     fetch(`/.netlify/functions/unogs-films-api-handler?netflixId=${netflixId}`, {
 	    "method": "GET"
     })
@@ -109,6 +115,7 @@ const getSingleFilmInfo = (netflixId) => {
 /* UI Handling functions ----------------------------------------------------- */
 
 const animateIntoJar = (domItem, itemNumber) => {
+    // handles the actual animation of DOM 'paper' items
     let pos = 120;
     let id = setInterval(frame, 5);
     
@@ -123,6 +130,7 @@ const animateIntoJar = (domItem, itemNumber) => {
 }
 
 const addGenreDomItemRepresentation = (itemNumber) => {
+    // adds the animation of paper items in the DOM
     const $movieJarPaperList = document.querySelector('#js-movie-jar-paper-list');
 
     const listItemNode = document.createElement("LI");   
@@ -153,6 +161,7 @@ const removeAppLoadingState = () => {
 }
 
 const displayPostJarStep = () => {
+    // displays either chosen movie/series or error, if there is one
     hideDomItem($movieChoiceFormWrapper);
 
     $(jarDomElId).addClass('js-reveal-state');
