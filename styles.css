@@ -12,6 +12,8 @@
 
 :root {
     --red-color: #F10B0E;
+    --recoleta-font-stack: "Recoleta Black", "Recoleta", "Cooper", serif;
+    --apercu-font-stack: "Apercu",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 }
 
 html {
@@ -122,11 +124,11 @@ a, b, i, strong, em, small, code {
 
 h1,h2,h3,h4,h5 {
     color: var(--red-color);
-    font-family: "Recoleta Black", serif; 
+    font-family: var(--recoleta-font-stack);
 }
 
 p {
-    font-family: "Apercu", sans-serif; 
+    font-family: var(--apercu-font-stack);
 }
 
 .container {
@@ -147,6 +149,7 @@ p {
 .app-title {
     text-align: center;
     margin-bottom: 3vh;
+    letter-spacing: -2px;
 }
 
 @media screen and (max-width: 600px) {
@@ -262,7 +265,7 @@ p {
 
     transition: transform 1s ease-in-out;
     
-    font-family: "Recoleta Black", serif;
+    font-family: var(--recoleta-font-stack);
     font-size: 0.8em;
     line-height: 1.1;
     color: #FFF;
@@ -415,7 +418,7 @@ p {
 
     margin-top: 0;
 
-    font-family: "Apercu";
+    font-family: var(--apercu-font-stack);
     font-size: 1em;
     text-transform: uppercase;
     line-height: 1.2;
@@ -696,7 +699,7 @@ p {
     margin: 0 auto;
     
     color: var(--red-color);
-    font-family: 'Recoleta Black', serif;
+    font-family: var(--recoleta-font-stack);
     font-size: 0.9em;
     text-align: center;
     text-transform: uppercase;
