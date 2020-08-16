@@ -36,7 +36,7 @@ const checkIfGenreRecordExistsThenAdd = (genreName, movieObjectToStore) => {
 
     if (!genreAlreadyInStore) {
 
-        const newGenreObject = new Object();
+        const newGenreObject = {};
         
         newGenreObject.id = cuid();
         newGenreObject.genreName = genreName;
